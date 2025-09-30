@@ -1,6 +1,6 @@
 import streamlit as st
 import openai
-from openai import error
+from openai import AuthenticationError, RateLimitError
 
 st.set_page_config(page_title="AI Chatbot", page_icon="🤖")
 st.title("🤖 AI Chatbot")
@@ -32,9 +32,9 @@ if user_input:
             )
             bot_message = response.choices[0].message.content.strip()
             st.session_state.messages.append({"role": "assistant", "content": bot_message})
-        except error.AuthenticationError:
+        except AuthenticationError:
             st.error("Invalid API key. Please check your key in the sidebar.")
-        except error.RateLimitError:
+        except RateLimitError:
             st.error("Rate limit exceeded or insufficient quota. Check your OpenAI account.")
         except Exception as e:
             st.error(f"Error: {e}")
@@ -46,4 +46,5 @@ for msg in st.session_state.messages:
         st.markdown(f"**You:** {msg['content']}")
     elif msg["role"] == "assistant":
         st.markdown(f"**Bot:** {msg['content']}")
+
 
